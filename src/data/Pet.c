@@ -3,8 +3,14 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
-Pet Pet_ctor(SPECIES species, const char * name, int age, int cmds, const char * owner)
+bool SPECIES_is_Pet(SPECIES species)
+{
+    return species >= SPECIES_DOG && species < SPECIES_HORSE;
+}
+
+Pet Pet_ctor(SPECIES species, const char * name, int age, Cmd cmds, const char * owner)
 {
     Pet pet;
 
@@ -18,7 +24,7 @@ Pet Pet_ctor(SPECIES species, const char * name, int age, int cmds, const char *
     return pet;
 }
 
-Pet * Pet_new(SPECIES species, const char * name, int age, int cmds, const char * owner)
+Pet * Pet_new(SPECIES species, const char * name, int age, Cmd cmds, const char * owner)
 {
     Pet * pet;
 
@@ -40,4 +46,25 @@ void Pet_del(Pet * pet)
 char * Pet_owner(const Pet * pet)
 {
     return (char *) pet->owner;
+}
+
+void Pet_set_owner_len(Pet * pet, const char * owner, int len)
+{
+    len = $min(len, PET_NOBSIZE - 1);
+    strncpy(pet->owner, owner, len);
+}
+
+void Pet_set_owner(Pet * pet, const char * owner)
+{
+    Pet_set_owner_len(pet, owner, strlen(owner));
+}
+
+int Pet_cstr(const Pet * pet, char * buff)
+{
+    int len;
+
+    len = Animal_cstr((Animal *) pet, buff);
+    len += sprintf(buff + len, " owner : %s ", pet->owner);
+
+    return len;
 }

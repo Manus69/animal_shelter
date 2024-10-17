@@ -12,6 +12,6 @@ struct Pet
     char    owner[PET_NOBSIZE];
 };
 
-Pet Pet_ctor(SPECIES species, const char * name, int age, int cmds, const char * owner);
+Pet Pet_ctor(SPECIES species, const char * name, int age, Cmd cmds, const char * owner);
 
 #endif

@@ -2,13 +2,14 @@
 #include "Sumpter.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
 bool SPECIES_is_Sumpter(SPECIES species)
 {
     return species >= SPECIES_HORSE;
 }
 
-Sumpter Sumpter_ctor(SPECIES species, const char * name, int age, int cmds, int capacity)
+Sumpter Sumpter_ctor(SPECIES species, const char * name, int age, Cmd cmds, int capacity)
 {
     return (Sumpter)
     {
@@ -17,7 +18,7 @@ Sumpter Sumpter_ctor(SPECIES species, const char * name, int age, int cmds, int 
     };
 }
 
-Sumpter * Sumpter_new(SPECIES species, const char * name, int age, int cmds, int capacity)
+Sumpter * Sumpter_new(SPECIES species, const char * name, int age, Cmd cmds, int capacity)
 {
     Sumpter * sr;
 
@@ -39,4 +40,14 @@ void Sumpter_del(Sumpter * sr)
 int Sumpter_capacity(const Sumpter * sr)
 {
     return sr->capacity;
+}
+
+int Sumpter_cstr(const Sumpter * sr, char * buff)
+{
+    int len;
+
+    len = Animal_cstr((Animal *) sr, buff);
+    len += sprintf(buff + len, "capacity : %d ", sr->capacity);
+
+    return len;
 }

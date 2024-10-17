@@ -9,10 +9,11 @@ struct Animal
 {
     SPECIES species;
     int     age;
-    int     cmd;
+    Cmd     cmd;
     char    name[ANIMAL_NBSIZE];
 };
 
-Animal Animal_ctor(SPECIES species, const char * name, int age, int cmds);
+Animal Animal_ctor_nl(SPECIES species, const char * name, int nlen, int age, Cmd cmds);
+Animal Animal_ctor(SPECIES species, const char * name, int age, Cmd cmds);
 
 #endif

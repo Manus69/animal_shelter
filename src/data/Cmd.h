@@ -14,6 +14,7 @@ typedef enum
     CMD_CUDDLE,
     CMD_FETCH,
     CMD_SPIT,
+    CMD_JUMP,
     CMD_COUNT,
 }   CMD;
 
@@ -26,5 +27,9 @@ static inline bool Cmd_has(const Cmd * cmds, CMD cmd)
 {
     return * cmds & (1 << cmd);
 }
+
+char *  CMD_name(CMD cmd);
+int     CMD_parse(const char * cstr, CMD * cmd);
+int     Cmd_cstr(Cmd cmd, char * buff);
 
 #endif

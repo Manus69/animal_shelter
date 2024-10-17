@@ -10,7 +10,7 @@ struct Sumpter
     int     capacity;
 };
 
-Sumpter Sumpter_ctor(SPECIES species, const char * name, int age, int cmds, int capacity);
+Sumpter Sumpter_ctor(SPECIES species, const char * name, int age, Cmd cmds, int capacity);
 
 
 #endif
