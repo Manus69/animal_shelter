@@ -1,19 +1,16 @@
-#include "./sqlite/sqlite3.h"
-#include "io.h"
+#include "master.h"
+#include "data/IAnimal.h"
+#include "data/Pet.h"
 
 #include <stdio.h>
 
-const char * stmt = 
-"CREATE TABLE ANIMALS(" \
-"ID INT PRIMARY KEY NOT NULL," \
-"NAME TEXT," \
-"AGE INT );";
-
-
-int main(int argc, char ** argv)
+int main()
 {
-    
-    if (argc == 1) return io_msg_help();
+    Pet * pet = Pet_new(SPECIES_ASS, "cock", 10, 0, "ass");
 
+    printf("%s\n%s\n%d\n", Animal_name((Animal *) pet), Pet_owner(pet), Animal_age((Animal *) pet));
 
+    Pet_del(pet);
+
+    return 0;
 }
