@@ -9,6 +9,7 @@ typedef enum
     ERR_VAL,
     ERR_MEM,
     ERR_SQL,
+    ERR_LOGIC,
     ERR_UNDEF,
     ERR_COUNT,
 }   ERR;

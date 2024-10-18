@@ -6,6 +6,7 @@
 typedef struct Pet Pet;
 
 bool    SPECIES_is_Pet(SPECIES species);
+bool    Animal_is_Pet(const Animal * animal);
 Pet *   Pet_new(SPECIES species, const char * name, int age, Cmd cmds, const char * owner);
 void    Pet_del(Pet * pet);
 char *  Pet_owner(const Pet * pet);

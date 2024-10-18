@@ -13,7 +13,8 @@ struct Animal
     char    name[ANIMAL_NBSIZE];
 };
 
-Animal Animal_ctor_nl(SPECIES species, const char * name, int nlen, int age, Cmd cmds);
-Animal Animal_ctor(SPECIES species, const char * name, int age, Cmd cmds);
+Animal  Animal_ctor_nl(SPECIES species, const char * name, int nlen, int age, Cmd cmds);
+Animal  Animal_ctor(SPECIES species, const char * name, int age, Cmd cmds);
+int     Animal_cstr_base(const Animal * animal, char * buff);
 
 #endif

@@ -57,7 +57,7 @@ Cmd Animal_Cmd(const Animal * animal)
     return animal->cmd;
 }
 
-int Animal_cstr(const Animal * animal, char * buff)
+int Animal_cstr_base(const Animal * animal, char * buff)
 {
     int len;
 

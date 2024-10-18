@@ -13,7 +13,7 @@ char *  Animal_name(const Animal * animal);
 void    Animal_set_name_len(Animal * animal, const char * name, int len);
 void    Animal_set_name(Animal * animal, const char * name);
 Cmd     Animal_Cmd(const Animal * animal);
-int     Animal_cstr(const Animal * animal, char * buff);
+int     Animal_cstr(const Animal * aml, char * buff);
 
 
 #endif

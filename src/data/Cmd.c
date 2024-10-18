@@ -59,3 +59,18 @@ int CMD_parse(const char * cstr, CMD * cmd)
 
     return 0;
 }
+
+bool CMD_parse_Str(Str str, CMD * cmd)
+{
+    for (int k = 1; k < CMD_COUNT; k ++)
+    {
+        if (Str_eq(str, CMD_name(k)))
+        {
+            * cmd = k;
+
+            return true;
+        }
+    }
+
+    return false;
+}

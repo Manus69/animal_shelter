@@ -9,6 +9,11 @@ bool SPECIES_is_Sumpter(SPECIES species)
     return species >= SPECIES_HORSE;
 }
 
+bool Animal_is_Sumpter(const Animal * aml)
+{
+    return SPECIES_is_Sumpter(aml->species);
+}
+
 Sumpter Sumpter_ctor(SPECIES species, const char * name, int age, Cmd cmds, int capacity)
 {
     return (Sumpter)
@@ -46,7 +51,7 @@ int Sumpter_cstr(const Sumpter * sr, char * buff)
 {
     int len;
 
-    len = Animal_cstr((Animal *) sr, buff);
+    len = Animal_cstr_base((Animal *) sr, buff);
     len += sprintf(buff + len, "capacity : %d ", sr->capacity);
 
     return len;

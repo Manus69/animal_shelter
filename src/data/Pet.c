@@ -10,6 +10,11 @@ bool SPECIES_is_Pet(SPECIES species)
     return species >= SPECIES_DOG && species < SPECIES_HORSE;
 }
 
+bool Animal_is_Pet(const Animal * animal)
+{
+    return SPECIES_is_Pet(animal->species);
+}
+
 Pet Pet_ctor(SPECIES species, const char * name, int age, Cmd cmds, const char * owner)
 {
     Pet pet;
@@ -63,7 +68,7 @@ int Pet_cstr(const Pet * pet, char * buff)
 {
     int len;
 
-    len = Animal_cstr((Animal *) pet, buff);
+    len = Animal_cstr_base((Animal *) pet, buff);
     len += sprintf(buff + len, " owner : %s ", pet->owner);
 
     return len;

@@ -19,5 +19,6 @@ char *  SPECIES_name(SPECIES species);
 char *  SPECIES_sound(SPECIES species);
 Cmd     SPECIES_commands(SPECIES species);
 int     SPECIES_parse(const char * cstr, SPECIES * species);
+bool    SPECIES_parse_Str(Str str, SPECIES * species);
 
 #endif

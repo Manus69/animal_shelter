@@ -61,3 +61,18 @@ int SPECIES_parse(const char * cstr, SPECIES * species)
 
     return 0;
 }
+
+bool SPECIES_parse_Str(Str str, SPECIES * species)
+{
+    for (int k = 1; k < SPECIES_COUNT; k ++)
+    {
+        if (Str_eq(str, SPECIES_name(k)))
+        {
+            * species = k;
+
+            return true;
+        }
+    }
+
+    return false;
+}
