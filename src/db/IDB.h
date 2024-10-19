@@ -8,6 +8,9 @@ typedef struct DB DB;
 
 ERR DB_init(DB ** db);
 ERR DB_deinit(DB * db);
+ERR DB_put(DB * db, const Animal * aml);
+ERR DB_get(DB * db, int id, Animal ** aml);
+ERR DB_print(DB * db);
 
 
 #endif

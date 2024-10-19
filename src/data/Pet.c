@@ -24,7 +24,7 @@ Pet Pet_ctor(SPECIES species, const char * name, int age, Cmd cmds, const char *
         .animal = Animal_ctor(species, name, age, cmds),
     };
 
-    strncpy(pet.owner, owner, PET_NOBSIZE - 1);
+    if (owner) strncpy(pet.owner, owner, PET_NOBSIZE - 1);
 
     return pet;
 }

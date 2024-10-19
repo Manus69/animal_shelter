@@ -31,6 +31,11 @@ void Animal_del(Animal * animal)
     free(animal);
 }
 
+SPECIES Animal_species(const Animal * aml)
+{
+    return aml->species;
+}
+
 char * Animal_name(const Animal * animal)
 {
     return (char *) animal->name;
