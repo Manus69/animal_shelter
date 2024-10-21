@@ -28,19 +28,12 @@ int main()
 
     if (! DB_init(& db))
     {
-        // DB_print(db);
+        Animal * aml;
+        if (Animal_build("dog fag 10", & aml)) return printf("err");
+        if (DB_insert(db, aml)) return printf("err");
 
-        // Pet * pet = Pet_new(SPECIES_DOG, "my dick", 3, 0, 0);
-        // if (DB_put(db, (Animal *) pet)) printf("shit\n");
-
-        // Animal_del((Animal *) pet);
-        // // DB_print(db);
-        // DB_test(db);
-        // DB_print(db);
-
-        // DB_deinit(db);
-
-        DB_print1(db);
+        DB_deinit(db);
+        Animal_del(aml);
     }
 
     return 0;

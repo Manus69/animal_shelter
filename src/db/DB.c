@@ -33,6 +33,13 @@ typedef enum
                             _TBL_OWNER " text," \
                             _TBL_CAPACITY " int);"
 
+static ERR _stmt_ret(Stmt * stmt, ERR err)
+{
+    sqlite3_finalize(stmt);
+
+    return err;
+}
+
 static ERR _create_table(DB * db)
 {
     sqlite3_stmt *  stmt;
@@ -42,11 +49,9 @@ static ERR _create_table(DB * db)
     if (rst) return ERR_SQL;
 
     rst = sqlite3_step(stmt);
-    if (rst != SQLITE_DONE) return ERR_SQL;
+    if (rst != SQLITE_DONE) return _stmt_ret(stmt, ERR_DB);
 
-    sqlite3_finalize(stmt);
-
-    return ERR_NONE;
+    return _stmt_ret(stmt, ERR_NONE);
 }
 
 ERR DB_init(DB ** db)
@@ -85,10 +90,10 @@ static Dto _row_Dto(Stmt * stmt)
 
     dto.id = sqlite3_column_int(stmt, TBL_COL_ID);
     dto.species = sqlite3_column_int(stmt, TBL_COL_SPECIES);
-    dto.name = sqlite3_column_text(stmt, TBL_COL_NAME);
+    dto.name = (char *) sqlite3_column_text(stmt, TBL_COL_NAME);
     dto.age = sqlite3_column_int(stmt, TBL_COL_AGE);
     dto.cmds = sqlite3_column_int(stmt, TBL_COL_CMDS);
-    dto.owner = sqlite3_column_text(stmt, TBL_COL_OWNER);
+    dto.owner = (char *) sqlite3_column_text(stmt, TBL_COL_OWNER);
     dto.capacity = sqlite3_column_int(stmt, TBL_COL_CAPACITY);
 
     return dto;
@@ -99,13 +104,14 @@ static void _Dto_bind(Stmt * stmt, Dto dto)
     sqlite3_bind_int(stmt, TBL_COL_SPECIES, dto.species);
     sqlite3_bind_text(stmt, TBL_COL_NAME, dto.name, -1, SQLITE_STATIC);
     sqlite3_bind_int(stmt, TBL_COL_AGE, dto.age);
-    
-
+    sqlite3_bind_int(stmt, TBL_COL_CMDS, dto.cmds);
+    sqlite3_bind_text(stmt, TBL_COL_OWNER, dto.owner, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, TBL_COL_CAPACITY, dto.capacity);
 }
 
 ERR DB_get_by_id(DB * db, int id, Animal ** aml)
 {
-    const char * sql = "select * from " _TBL_NAME " where id=?;";
+    char *  sql = "select * from " _TBL_NAME " where id=?;";
     Stmt *  stmt;
     Dto     dto;
 
@@ -113,12 +119,12 @@ ERR DB_get_by_id(DB * db, int id, Animal ** aml)
     if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return ERR_SQL;
 
     sqlite3_bind_int(stmt, 1, id);
-    if (sqlite3_step(stmt) != SQLITE_ROW) return ERR_DB;
+    if (sqlite3_step(stmt) != SQLITE_ROW) return _stmt_ret(stmt, ERR_DB);
 
     dto = _row_Dto(stmt);
     * aml = Dto_Animal(dto);
 
-    return ERR_NONE;
+    return _stmt_ret(stmt, ERR_NONE);
 }
 
 ERR DB_get_by_name(DB * db, const char * name, Animal ** aml)
@@ -130,36 +136,47 @@ ERR DB_get_by_name(DB * db, const char * name, Animal ** aml)
     if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return ERR_SQL;
 
     sqlite3_bind_text(stmt, 1, name, -1, SQLITE_STATIC);
-    if (sqlite3_step(stmt) != SQLITE_ROW) return ERR_DB;
+    if (sqlite3_step(stmt) != SQLITE_ROW) return _stmt_ret(stmt, ERR_DB);
 
     * aml = Dto_Animal(_row_Dto(stmt));
 
-    return ERR_NONE;
+    return _stmt_ret(stmt, ERR_NONE);
 }
 
 ERR DB_insert(DB * db, const Animal * aml)
 {
     char * sql = "insert into " _TBL_NAME " (" \
-    _TBL_SPECIES ", " \
-    _TBL_NAME_FLD ", " \
-    _TBL_AGE ", " \
-    _TBL_CMDS ", " \
-    _TBL_OWNER ", " \
-    _TBL_CAPACITY ")" \
-    " values (?, ?, ?, ?, ?, ?);";
+            _TBL_SPECIES ", " \
+            _TBL_NAME_FLD ", " \
+            _TBL_AGE ", " \
+            _TBL_CMDS ", " \
+            _TBL_OWNER ", " \
+            _TBL_CAPACITY ")" \
+            " values (?, ?, ?, ?, ?, ?);";
+    Stmt *  stmt;
+    Dto     dto;
+
+    if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return ERR_SQL;
+    
+    dto = Animal_Dto(aml);
+    _Dto_bind(stmt, dto);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) return _stmt_ret(stmt, ERR_DB);
+
+    return _stmt_ret(stmt, ERR_NONE);
 }
 
-ERR DB_update(DB * db, int id, Dto dto)
-{
+// ERR DB_update(DB * db, int id, Dto dto)
+// {
+//     // char * sql = "update " _TBL_NAME " set "
+// }
 
-}
+// ERR DB_remove_by_id(DB * db, int id, Animal ** aml)
+// {
 
-ERR DB_remove_by_id(DB * db, int id, Animal ** aml)
-{
+// }
 
-}
+// ERR DB_purge(DB * db, SPECIES species)
+// {
 
-ERR DB_purge(DB * db, SPECIES species)
-{
-
-}
+// }
