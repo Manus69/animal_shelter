@@ -25,7 +25,7 @@ typedef struct
 }   Dto;
 
 Dto         Animal_Dto(const Animal * aml);
-Animal *    Dto_Animal(const Dto * dto);
+Animal *    Dto_Animal(Dto dto);
 
 
 #endif

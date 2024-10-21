@@ -30,13 +30,17 @@ int main()
     {
         // DB_print(db);
 
-        Pet * pet = Pet_new(SPECIES_DOG, "my dick", 3, 0, 0);
-        if (DB_put(db, (Animal *) pet)) printf("shit\n");
+        // Pet * pet = Pet_new(SPECIES_DOG, "my dick", 3, 0, 0);
+        // if (DB_put(db, (Animal *) pet)) printf("shit\n");
 
-        Animal_del((Animal *) pet);
-        DB_print(db);
+        // Animal_del((Animal *) pet);
+        // // DB_print(db);
+        // DB_test(db);
+        // DB_print(db);
 
-        DB_deinit(db);
+        // DB_deinit(db);
+
+        DB_print1(db);
     }
 
     return 0;

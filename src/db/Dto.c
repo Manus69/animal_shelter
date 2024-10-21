@@ -19,15 +19,15 @@ Dto Animal_Dto(const Animal * aml)
     return dto;
 }
 
-Animal * Dto_Animal(const Dto * dto)
+Animal * Dto_Animal(Dto dto)
 {
-    if (SPECIES_is_Pet(dto->species))
+    if (SPECIES_is_Pet(dto.species))
     {
-        return (Animal *) Pet_new(dto->species, dto->name, dto->age, dto->cmds, dto->owner);
+        return (Animal *) Pet_new(dto.species, dto.name, dto.age, dto.cmds, dto.owner);
     }
-    if (SPECIES_is_Sumpter(dto->species))
+    if (SPECIES_is_Sumpter(dto.species))
     {
-        return (Animal *) Sumpter_new(dto->species, dto->name, dto->age, dto->cmds, dto->capacity);
+        return (Animal *) Sumpter_new(dto.species, dto.name, dto.age, dto.cmds, dto.capacity);
     }
 
     assert(0);
