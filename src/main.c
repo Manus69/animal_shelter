@@ -1,40 +1,30 @@
-#include "master.h"
-#include "data/IPet.h"
-#include "data/ISumpter.h"
-#include "data/IAnimal.h"
-#include "db/IDB.h"
+#include "Program.h"
 
 #include <stdio.h>
 
-ERR Animal_build(const char * cstr, Animal ** animal);
-ERR Animal_build_Str(Str str, Animal ** animal);
+static ERR _err_and_die(const Program * prog)
+{
+    ERR err;
+
+    err = Program_status(prog);
+    printf("%s\n", Err_cstr(err));
+
+    return err;
+}
 
 //simgle quotes for name\owner?
 //db path is all fucked up
+//compile all statements at intit, bind when necessary?
 
 int main()
 {
-    // char buff[1 << 10] = {};
-    // Animal * aml;
+    Program prog;
 
-    // if (Animal_build("dog cock 69 -1 ", & aml)) return printf("fuck");
+    if (Program_init(& prog)) _err_and_die(& prog);
 
-    // Animal_cstr(aml, buff);
-    // printf("%s\n", buff);
+    while (Program_run(& prog)) {}
 
-    // Animal_del(aml);
-
-    DB * db;
-
-    if (! DB_init(& db))
-    {
-        Animal * aml;
-        if (Animal_build("dog fag 10", & aml)) return printf("err");
-        if (DB_insert(db, aml)) return printf("err");
-
-        DB_deinit(db);
-        Animal_del(aml);
-    }
+    Program_del(& prog);
 
     return 0;
 }

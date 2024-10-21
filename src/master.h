@@ -15,6 +15,7 @@ typedef struct
     int     len;
 }   Str;
 
+int     lib_get_line(char * buff, int bsize);
 int     lib_count_ws(const char * cstr);
 int     lib_word_len(const char * cstr);
 int     lib_next_ws(const char * cstr);

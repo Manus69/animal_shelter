@@ -3,6 +3,28 @@
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
+#include <stdio.h>
+
+int lib_get_line(char * buff, int bsize)
+{
+    int x;
+    int len;
+
+    memset(buff, 0, bsize);
+    len = 0;
+
+    while (true)
+    {
+        x = getchar();
+        if (x == '\n' || x == EOF) break;
+
+        buff[len ++] = x;
+
+        if (len == bsize - 1) break;
+    }
+
+    return len;
+}
 
 int lib_count_ws(const char * cstr)
 {

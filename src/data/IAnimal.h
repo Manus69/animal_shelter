@@ -17,5 +17,4 @@ Cmd     Animal_Cmd(const Animal * animal);
 int     Animal_cstr(const Animal * aml, char * buff);
 void    Animal_dbg(const Animal * aml);
 
-
 #endif

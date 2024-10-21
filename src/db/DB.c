@@ -79,11 +79,6 @@ ERR DB_deinit(DB * db)
     return val == SQLITE_OK ? ERR_NONE : ERR_DB;
 }
 
-ERR DB_print(DB * db)
-{
-
-}
-
 static Dto _row_Dto(Stmt * stmt)
 {
     Dto dto = {};
@@ -127,7 +122,7 @@ ERR DB_get_by_id(DB * db, int id, Animal ** aml)
     return _stmt_ret(stmt, ERR_NONE);
 }
 
-ERR DB_get_by_name(DB * db, const char * name, Animal ** aml)
+ERR DB_get_by_name(DB * db, const char * name, int len, Animal ** aml)
 {
     char * sql = "select * from " _TBL_NAME " where name=?;";
     Stmt * stmt;
@@ -135,7 +130,7 @@ ERR DB_get_by_name(DB * db, const char * name, Animal ** aml)
     * aml = 0;
     if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return ERR_SQL;
 
-    sqlite3_bind_text(stmt, 1, name, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 1, name, len, SQLITE_STATIC);
     if (sqlite3_step(stmt) != SQLITE_ROW) return _stmt_ret(stmt, ERR_DB);
 
     * aml = Dto_Animal(_row_Dto(stmt));
@@ -166,15 +161,65 @@ ERR DB_insert(DB * db, const Animal * aml)
     return _stmt_ret(stmt, ERR_NONE);
 }
 
-// ERR DB_update(DB * db, int id, Dto dto)
-// {
-//     // char * sql = "update " _TBL_NAME " set "
-// }
+ERR DB_update(DB * db, int id, const Animal * aml)
+{
+    char *  sql = "update " _TBL_NAME " set " \
+            _TBL_SPECIES "=? ," \
+            _TBL_NAME "=? ," \
+            _TBL_AGE "=? ," \
+            _TBL_CMDS "=? ," \
+            _TBL_OWNER "=? ," \
+            _TBL_CAPACITY "=? " \
+            "where id=?;";
+    Stmt *  stmt;
 
-// ERR DB_remove_by_id(DB * db, int id, Animal ** aml)
-// {
+    if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return _stmt_ret(stmt, ERR_SQL);
 
-// }
+    _Dto_bind(stmt, Animal_Dto(aml));
+    sqlite3_bind_int(stmt, TBL_COL_CAPACITY + 1, id);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) return _stmt_ret(stmt, ERR_DB);    
+    
+    return _stmt_ret(stmt, ERR_NONE);
+}   
+
+ERR DB_remove_by_id(DB * db, int id, Animal ** aml)
+{
+    char * sql = "delete from " _TBL_NAME " where id=?;";
+    Stmt * stmt;
+
+    * aml = 0;
+    if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return _stmt_ret(stmt, ERR_SQL);
+    DB_get_by_id(db, id, aml);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) return _stmt_ret(stmt, ERR_DB);
+
+    return _stmt_ret(stmt, ERR_NONE);
+}
+
+//shit
+ERR DB_print(DB * db)
+{
+    char *  sql = "select * from animals;";
+    Stmt *  stmt;
+    Animal * aml;
+
+
+    if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return ERR_SQL;
+
+    while (true)
+    {
+        if (sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            aml = Dto_Animal(_row_Dto(stmt));
+            Animal_dbg(aml);
+            Animal_del(aml);
+        }
+        else break;
+    }
+
+    return _stmt_ret(stmt, ERR_NONE);
+}
 
 // ERR DB_purge(DB * db, SPECIES species)
 // {

@@ -15,4 +15,6 @@ typedef enum
     ERR_COUNT,
 }   ERR;
 
+char * Err_cstr(ERR err);
+
 #endif
