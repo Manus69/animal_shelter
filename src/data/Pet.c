@@ -64,12 +64,17 @@ void Pet_set_owner(Pet * pet, const char * owner)
     Pet_set_owner_len(pet, owner, strlen(owner));
 }
 
+bool Pet_has_owner(const Pet * pet)
+{
+    return * pet->owner;
+}
+
 int Pet_cstr(const Pet * pet, char * buff)
 {
     int len;
 
     len = Animal_cstr_base((Animal *) pet, buff);
-    len += sprintf(buff + len, " owner : %s ", pet->owner);
+    if (Pet_has_owner(pet)) len += sprintf(buff + len, " (%s)", pet->owner);
 
     return len;
 }

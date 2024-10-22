@@ -18,6 +18,7 @@ typedef enum
 char *  SPECIES_name(SPECIES species);
 char *  SPECIES_sound(SPECIES species);
 Cmd     SPECIES_commands(SPECIES species);
+bool    SPECIES_can_be_taught(SPECIES species, CMD cmd);
 int     SPECIES_parse(const char * cstr, SPECIES * species);
 bool    SPECIES_parse_Str(Str str, SPECIES * species);
 

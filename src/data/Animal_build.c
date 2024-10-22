@@ -49,7 +49,7 @@ static bool _parse_integer(Str * str, int * x)
 
 static bool _parse_age(Str * str, Animal * aml)
 {
-    return _parse_integer(str, & aml->age);
+    return _parse_integer(str, & aml->age) && (aml->age >= 0);
 }
 
 static bool _parse_capacity(Str * str, Sumpter * sr)
@@ -77,6 +77,7 @@ static bool _parse_cmds(Str * str, Animal * aml)
 
         if (Str_empty(word)) break;
         if (! CMD_parse_Str(word, & cmd)) return false;
+        if (! SPECIES_can_be_taught(aml->species, cmd)) return false;
 
         Cmd_add(& aml->cmd, cmd);
     }

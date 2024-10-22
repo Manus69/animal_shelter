@@ -2,7 +2,7 @@
 
 char * Err_cstr(ERR err)
 {
-    static const char * _strings[ERR_COUNT] = 
+    static char * _strings[ERR_COUNT] = 
     {
         [ERR_NONE] = "Ok",
         [ERR_DB] = "Db error",

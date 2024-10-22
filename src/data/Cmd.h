@@ -25,7 +25,7 @@ static inline Cmd Cmd_add(Cmd * cmds, CMD cmd)
 
 static inline bool Cmd_has(const Cmd * cmds, CMD cmd)
 {
-    return * cmds & (1 << cmd);
+    return (* cmds) & (1 << cmd);
 }
 
 char *  CMD_name(CMD cmd);

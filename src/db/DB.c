@@ -33,6 +33,21 @@ typedef enum
                             _TBL_OWNER " text," \
                             _TBL_CAPACITY " int);"
 
+static const char * _sql[] =
+{
+    "create table if not exists animals (id integer primary key not null, "\
+    "species int, name text, age int, commands int, owner text, capacity int);",
+
+    "select * from animals where id=?;",
+    "select * from animals where species=?;",
+    "insert into animals (species, name, age, commands, owner, capacity) values "\
+    "(?, ?, ?, ?, ?, ?);",
+    "update animals set commands=? where id=?;",
+    "delete from animals where id=?;",
+    "delete from animals where species=?;",
+    NULL,
+};
+
 static ERR _stmt_ret(Stmt * stmt, ERR err)
 {
     sqlite3_finalize(stmt);
@@ -165,7 +180,7 @@ ERR DB_update(DB * db, int id, const Animal * aml)
 {
     char *  sql = "update " _TBL_NAME " set " \
             _TBL_SPECIES "=? ," \
-            _TBL_NAME "=? ," \
+            _TBL_NAME_FLD "=? ," \
             _TBL_AGE "=? ," \
             _TBL_CMDS "=? ," \
             _TBL_OWNER "=? ," \
@@ -190,6 +205,7 @@ ERR DB_remove_by_id(DB * db, int id, Animal ** aml)
 
     * aml = 0;
     if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return _stmt_ret(stmt, ERR_SQL);
+    sqlite3_bind_int(stmt, 1, id);
     DB_get_by_id(db, id, aml);
 
     if (sqlite3_step(stmt) != SQLITE_DONE) return _stmt_ret(stmt, ERR_DB);
@@ -202,8 +218,8 @@ ERR DB_print(DB * db)
 {
     char *  sql = "select * from animals;";
     Stmt *  stmt;
-    Animal * aml;
-
+    Animal *aml;
+    Dto     dto;
 
     if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return ERR_SQL;
 
@@ -211,7 +227,10 @@ ERR DB_print(DB * db)
     {
         if (sqlite3_step(stmt) == SQLITE_ROW)
         {
-            aml = Dto_Animal(_row_Dto(stmt));
+            dto = _row_Dto(stmt);
+            printf("id = %d |", dto.id);
+
+            aml = Dto_Animal(dto);
             Animal_dbg(aml);
             Animal_del(aml);
         }
@@ -221,7 +240,15 @@ ERR DB_print(DB * db)
     return _stmt_ret(stmt, ERR_NONE);
 }
 
-// ERR DB_purge(DB * db, SPECIES species)
-// {
+ERR DB_purge(DB * db, SPECIES species)
+{
+    char * sql = "delete from animals where species=?;";
+    Stmt * stmt;
 
-// }
+    if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return ERR_SQL;
+    sqlite3_bind_int(stmt, 1, species);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) return _stmt_ret(stmt, ERR_DB);
+
+    return _stmt_ret(stmt, ERR_NONE);
+}

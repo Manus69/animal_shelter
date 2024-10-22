@@ -45,6 +45,11 @@ Cmd SPECIES_commands(SPECIES species)
     return _cmds[species];
 }
 
+bool SPECIES_can_be_taught(SPECIES species, CMD cmd)
+{
+    return SPECIES_commands(species) & cmd;
+}
+
 int SPECIES_parse(const char * cstr, SPECIES * species)
 {
     int len;

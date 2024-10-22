@@ -62,15 +62,20 @@ Cmd Animal_Cmd(const Animal * animal)
     return animal->cmd;
 }
 
+bool Animal_can_perform(const Animal * aml, CMD cmd)
+{
+    return Cmd_has(& aml->cmd, cmd);
+}
+
 int Animal_cstr_base(const Animal * animal, char * buff)
 {
     int len;
 
     len = 0;
-    len += sprintf(buff, "species : %s ", SPECIES_name(animal->species));
-    len += sprintf(buff + len, "name : %s ", animal->name);
-    len += sprintf(buff + len, "age : %d ", animal->age);
-    len += sprintf(buff + len, "commands : ");
+    len += sprintf(buff, "%s ", SPECIES_name(animal->species));
+    len += sprintf(buff + len, "'%s' ", animal->name);
+    len += sprintf(buff + len, "%d m.o.", animal->age);
+    len += sprintf(buff + len, " ");
     len += Cmd_cstr(animal->cmd, buff + len);
 
     return len;

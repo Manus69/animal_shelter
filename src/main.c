@@ -23,6 +23,14 @@ int main()
     if (Program_init(& prog)) _err_and_die(& prog);
 
     while (Program_run(& prog)) {}
+    
+    // Cmd cmd = 0;
+    // Cmd_add(& cmd, CMD_RUN);
+    // Cmd_add(& cmd, CMD_JUMP);
+    
+    // char buff[1000] = {};
+    // Cmd_cstr(cmd, buff);
+    // printf("%s\n", buff);
 
     Program_del(& prog);
 

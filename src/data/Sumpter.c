@@ -47,12 +47,24 @@ int Sumpter_capacity(const Sumpter * sr)
     return sr->capacity;
 }
 
+void Sumpter_carry(const Sumpter * sr, int weight)
+{
+    if (sr->capacity >= weight)
+    {
+        printf("%s carries %d tonnes\n", Animal_name((Animal *) sr), sr->capacity);
+    }
+    else
+    {
+        printf("%d tonnes is too much for poor %s\n", weight, Animal_name((Animal *) sr));
+    }
+}
+
 int Sumpter_cstr(const Sumpter * sr, char * buff)
 {
     int len;
 
     len = Animal_cstr_base((Animal *) sr, buff);
-    len += sprintf(buff + len, "capacity : %d ", sr->capacity);
+    len += sprintf(buff + len, " %d T", sr->capacity);
 
     return len;
 }
