@@ -32,3 +32,28 @@ Animal * Dto_Animal(Dto dto)
 
     assert(0);
 }
+
+Dto row_Dto(Stmt * stmt)
+{
+    Dto dto = {};
+
+    dto.id = sqlite3_column_int(stmt, TBL_COL_ID);
+    dto.species = sqlite3_column_int(stmt, TBL_COL_SPECIES);
+    dto.name = (char *) sqlite3_column_text(stmt, TBL_COL_NAME);
+    dto.age = sqlite3_column_int(stmt, TBL_COL_AGE);
+    dto.cmds = sqlite3_column_int(stmt, TBL_COL_CMDS);
+    dto.owner = (char *) sqlite3_column_text(stmt, TBL_COL_OWNER);
+    dto.capacity = sqlite3_column_int(stmt, TBL_COL_CAPACITY);
+
+    return dto;
+}
+
+void Stmt_Dto_bind(Stmt * stmt, Dto dto)
+{
+    sqlite3_bind_int(stmt, TBL_COL_SPECIES, dto.species);
+    sqlite3_bind_text(stmt, TBL_COL_NAME, dto.name, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, TBL_COL_AGE, dto.age);
+    sqlite3_bind_int(stmt, TBL_COL_CMDS, dto.cmds);
+    sqlite3_bind_text(stmt, TBL_COL_OWNER, dto.owner, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, TBL_COL_CAPACITY, dto.capacity);
+}

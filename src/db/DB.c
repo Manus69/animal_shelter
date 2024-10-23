@@ -5,68 +5,99 @@
 
 #include <stdio.h>
 
-typedef enum
-{
-    TBL_COL_ID,
-    TBL_COL_SPECIES,
-    TBL_COL_NAME,
-    TBL_COL_AGE,
-    TBL_COL_CMDS,
-    TBL_COL_OWNER,
-    TBL_COL_CAPACITY,
-    TBL_COL_COUNT,
-}   TBL_COL;
-
-#define _TBL_NAME           "animals"
-#define _TBL_SPECIES        "species"
-#define _TBL_NAME_FLD       "name"
-#define _TBL_AGE            "age"
-#define _TBL_CMDS           "commands"
-#define _TBL_OWNER          "owner"
-#define _TBL_CAPACITY       "capacity"
-#define _SQL_TBL_CREATE     "create table if not exists " \
-                            _TBL_NAME " (id integer primary key not null," \
-                            _TBL_SPECIES " int," \
-                            _TBL_NAME_FLD " text," \
-                            _TBL_AGE " int," \
-                            _TBL_CMDS " int," \
-                            _TBL_OWNER " text," \
-                            _TBL_CAPACITY " int);"
-
 static const char * _sql[] =
 {
-    "create table if not exists animals (id integer primary key not null, "\
+    [_SQL_CREATE] = "create table if not exists animals (id integer primary key not null, "\
     "species int, name text, age int, commands int, owner text, capacity int);",
 
-    "select * from animals where id=?;",
-    "select * from animals where species=?;",
-    "insert into animals (species, name, age, commands, owner, capacity) values "\
+    [_SQL_SEL_ID] = "select * from animals where id=?;",
+
+    [_SQL_SEL_SPECIES] = "select * from animals where species=?;",
+
+    [_SQL_SEL_AGE] = "select * from animals where age=?;",
+
+    [_SQL_INS] = "insert into animals (species, name, age, commands, owner, capacity) values "\
     "(?, ?, ?, ?, ?, ?);",
-    "update animals set commands=? where id=?;",
-    "delete from animals where id=?;",
-    "delete from animals where species=?;",
+
+    [_SQL_UPD_CMD] = "update animals set commands=? where id=?;",
+    
+    [_SQL_DEL_ID] = "delete from animals where id=?;",
+    
+    [_SQL_DEL_SPECIES] = "delete from animals where species=?;",
+    
+    [_SQL_DEL_AGE] = "delete from animals where age=?;",
+
     NULL,
 };
 
-static ERR _stmt_ret(Stmt * stmt, ERR err)
+static int _stmt_init(DB * db)
 {
-    sqlite3_finalize(stmt);
+    int res;
 
-    return err;
+    for (int k = 0; k < _SQL_COUNT; k ++)
+    {
+        if ((res = sqlite3_prepare_v2(db->db, _sql[k], -1, & db->stmts + k, 0))) return res;
+    }
+
+    return 0;
 }
 
-static ERR _create_table(DB * db)
+static int _create(DB * db)
 {
-    sqlite3_stmt *  stmt;
-    int             rst;
+    return sqlite3_step(db->stmts[_SQL_CREATE]);
+}
 
-    rst = sqlite3_prepare_v2(db->db, _SQL_TBL_CREATE, -1, & stmt, 0);
-    if (rst) return ERR_SQL;
+static ERR _print_rows(Stmt * stmt)
+{
+    Animal *    aml;
+    Dto         dto;
+    int         res;
 
-    rst = sqlite3_step(stmt);
-    if (rst != SQLITE_DONE) return _stmt_ret(stmt, ERR_DB);
+    while ((res = sqlite3_step(stmt)) == SQLITE_ROW)
+    {
+        dto = row_Dto(stmt);
+        aml = Dto_Animal(dto);
 
-    return _stmt_ret(stmt, ERR_NONE);
+        printf("id : %3d | ");
+        Animal_dbg(aml);
+        Animal_del(aml);
+    }
+
+    return res == SQLITE_DONE ? ERR_NONE : ERR_DB;
+}
+
+ERR DB_select_id(DB * db, int id)
+{
+    sqlite3_bind_int(db->stmts[_SQL_SEL_ID], 1, id);
+
+    return _print_rows(db->stmts[_SQL_SEL_ID]);
+}
+
+ERR DB_select_age(DB * db, int age)
+{
+    sqlite3_bind_int(db->stmts[_SQL_SEL_AGE], 1, age);
+
+    return _print_rows(db->stmts[_SQL_SEL_AGE]);
+}
+
+ERR DB_select_species(DB * db, SPECIES species)
+{
+    sqlite3_bind_int(db->stmts[_SQL_SEL_SPECIES], 1, species);
+
+    return _print_rows(db->stmts[_SQL_SEL_SPECIES]);
+}
+
+ERR DB_insert(DB * db, const Animal * aml)
+{
+
+}
+
+ERR DB_update_cmds(DB * db, int id, Cmd cmd)
+{
+    sqlite3_bind_int(db->stmts[_SQL_UPD_CMD], 1, cmd);
+    sqlite3_bind_int(db->stmts[_SQL_UPD_CMD], 2, id);
+
+    return sqlite3_step(db->stmts[_SQL_UPD_CMD]) == SQLITE_DONE ? ERR_NONE : ERR_DB;
 }
 
 ERR DB_init(DB ** db)
@@ -75,10 +106,14 @@ ERR DB_init(DB ** db)
 
     if ((* db = calloc(1, sizeof(* db))))
     {
-        rst = sqlite3_open(DB_PATH, & (* db)->db);
-        if (rst) return ({free(* db); ERR_DB;});
+        if ((rst = sqlite3_open(DB_PATH, & (* db)->db)))
+        {
+            free(db);
+
+            return ERR_IO;
+        }
         
-        return _create_table(* db);
+        return _create(* db) ? ERR_SQL : ERR_NONE;
     }
 
     return ERR_MEM;
@@ -88,167 +123,14 @@ ERR DB_deinit(DB * db)
 {
     int val;
 
+    for (int k = 0; k < _SQL_COUNT; k ++)
+    {
+        sqlite3_finalize(db->stmts[k]);
+    }
+
     val = sqlite3_close(db->db);
     free(db);
 
     return val == SQLITE_OK ? ERR_NONE : ERR_DB;
 }
 
-static Dto _row_Dto(Stmt * stmt)
-{
-    Dto dto = {};
-
-    dto.id = sqlite3_column_int(stmt, TBL_COL_ID);
-    dto.species = sqlite3_column_int(stmt, TBL_COL_SPECIES);
-    dto.name = (char *) sqlite3_column_text(stmt, TBL_COL_NAME);
-    dto.age = sqlite3_column_int(stmt, TBL_COL_AGE);
-    dto.cmds = sqlite3_column_int(stmt, TBL_COL_CMDS);
-    dto.owner = (char *) sqlite3_column_text(stmt, TBL_COL_OWNER);
-    dto.capacity = sqlite3_column_int(stmt, TBL_COL_CAPACITY);
-
-    return dto;
-}
-
-static void _Dto_bind(Stmt * stmt, Dto dto)
-{
-    sqlite3_bind_int(stmt, TBL_COL_SPECIES, dto.species);
-    sqlite3_bind_text(stmt, TBL_COL_NAME, dto.name, -1, SQLITE_STATIC);
-    sqlite3_bind_int(stmt, TBL_COL_AGE, dto.age);
-    sqlite3_bind_int(stmt, TBL_COL_CMDS, dto.cmds);
-    sqlite3_bind_text(stmt, TBL_COL_OWNER, dto.owner, -1, SQLITE_STATIC);
-    sqlite3_bind_int(stmt, TBL_COL_CAPACITY, dto.capacity);
-}
-
-ERR DB_get_by_id(DB * db, int id, Animal ** aml)
-{
-    char *  sql = "select * from " _TBL_NAME " where id=?;";
-    Stmt *  stmt;
-    Dto     dto;
-
-    * aml = 0;
-    if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return ERR_SQL;
-
-    sqlite3_bind_int(stmt, 1, id);
-    if (sqlite3_step(stmt) != SQLITE_ROW) return _stmt_ret(stmt, ERR_DB);
-
-    dto = _row_Dto(stmt);
-    * aml = Dto_Animal(dto);
-
-    return _stmt_ret(stmt, ERR_NONE);
-}
-
-ERR DB_get_by_name(DB * db, const char * name, int len, Animal ** aml)
-{
-    char * sql = "select * from " _TBL_NAME " where name=?;";
-    Stmt * stmt;
-
-    * aml = 0;
-    if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return ERR_SQL;
-
-    sqlite3_bind_text(stmt, 1, name, len, SQLITE_STATIC);
-    if (sqlite3_step(stmt) != SQLITE_ROW) return _stmt_ret(stmt, ERR_DB);
-
-    * aml = Dto_Animal(_row_Dto(stmt));
-
-    return _stmt_ret(stmt, ERR_NONE);
-}
-
-ERR DB_insert(DB * db, const Animal * aml)
-{
-    char * sql = "insert into " _TBL_NAME " (" \
-            _TBL_SPECIES ", " \
-            _TBL_NAME_FLD ", " \
-            _TBL_AGE ", " \
-            _TBL_CMDS ", " \
-            _TBL_OWNER ", " \
-            _TBL_CAPACITY ")" \
-            " values (?, ?, ?, ?, ?, ?);";
-    Stmt *  stmt;
-    Dto     dto;
-
-    if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return ERR_SQL;
-    
-    dto = Animal_Dto(aml);
-    _Dto_bind(stmt, dto);
-
-    if (sqlite3_step(stmt) != SQLITE_DONE) return _stmt_ret(stmt, ERR_DB);
-
-    return _stmt_ret(stmt, ERR_NONE);
-}
-
-ERR DB_update(DB * db, int id, const Animal * aml)
-{
-    char *  sql = "update " _TBL_NAME " set " \
-            _TBL_SPECIES "=? ," \
-            _TBL_NAME_FLD "=? ," \
-            _TBL_AGE "=? ," \
-            _TBL_CMDS "=? ," \
-            _TBL_OWNER "=? ," \
-            _TBL_CAPACITY "=? " \
-            "where id=?;";
-    Stmt *  stmt;
-
-    if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return _stmt_ret(stmt, ERR_SQL);
-
-    _Dto_bind(stmt, Animal_Dto(aml));
-    sqlite3_bind_int(stmt, TBL_COL_CAPACITY + 1, id);
-
-    if (sqlite3_step(stmt) != SQLITE_DONE) return _stmt_ret(stmt, ERR_DB);    
-    
-    return _stmt_ret(stmt, ERR_NONE);
-}   
-
-ERR DB_remove_by_id(DB * db, int id, Animal ** aml)
-{
-    char * sql = "delete from " _TBL_NAME " where id=?;";
-    Stmt * stmt;
-
-    * aml = 0;
-    if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return _stmt_ret(stmt, ERR_SQL);
-    sqlite3_bind_int(stmt, 1, id);
-    DB_get_by_id(db, id, aml);
-
-    if (sqlite3_step(stmt) != SQLITE_DONE) return _stmt_ret(stmt, ERR_DB);
-
-    return _stmt_ret(stmt, ERR_NONE);
-}
-
-//shit
-ERR DB_print(DB * db)
-{
-    char *  sql = "select * from animals;";
-    Stmt *  stmt;
-    Animal *aml;
-    Dto     dto;
-
-    if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return ERR_SQL;
-
-    while (true)
-    {
-        if (sqlite3_step(stmt) == SQLITE_ROW)
-        {
-            dto = _row_Dto(stmt);
-            printf("id = %d |", dto.id);
-
-            aml = Dto_Animal(dto);
-            Animal_dbg(aml);
-            Animal_del(aml);
-        }
-        else break;
-    }
-
-    return _stmt_ret(stmt, ERR_NONE);
-}
-
-ERR DB_purge(DB * db, SPECIES species)
-{
-    char * sql = "delete from animals where species=?;";
-    Stmt * stmt;
-
-    if (sqlite3_prepare_v2(db->db, sql, -1, & stmt, 0)) return ERR_SQL;
-    sqlite3_bind_int(stmt, 1, species);
-
-    if (sqlite3_step(stmt) != SQLITE_DONE) return _stmt_ret(stmt, ERR_DB);
-
-    return _stmt_ret(stmt, ERR_NONE);
-}
