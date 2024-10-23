@@ -24,19 +24,41 @@ static ERR _add(Program * prog, Str str)
     return prog->err;
 }
 
-static ERR _print(Program * prog)
+//to help msg functions
+static void _print_help(void)
+{
+    printf("Enter the command you wish the animal to perform or 'done' to return.\n");
+}
+
+static void _print_break(void)
 {
     printf("-----\n");
-    prog->err = DB_print_all(prog->db);
-    printf("-----\n");
+}
+
+static ERR _print_species(Program * prog, SPECIES sp)
+{
+
+}
+
+static ERR _print(Program * prog, Str str)
+{
+    Str     word;
+    SPECIES sp;
+
+    word = Str_word(& str);
+
+    if (SPECIES_parse_Str(word, & sp)) return _print_species(prog, sp);
+    if (word.len == 0)
+    {
+        _print_break();
+        prog->err = DB_print_all(prog->db);
+        _print_break();
+    }
 
     return prog->err;
 }
 
-static void _help(void)
-{
-    printf("Enter the command you wish the animal to perform or 'done' to return.\n");
-}
+
 
 static void _teach(Program * prog, Str str, int id, Animal * aml)
 {
@@ -48,19 +70,15 @@ static void _teach(Program * prog, Str str, int id, Animal * aml)
     {
         if (! Animal_learn(aml, cmd))
         {
-            printf("%s can't %s\n", Animal_name(aml), CMD_name(cmd));
-            return false;
+            return (void) printf("%s can't %s\n", Animal_name(aml), CMD_name(cmd));
         }
         
         prog->err = DB_update(prog->db, id, aml);
     }
     else
     {
-        printf("unknown command\n");
-        return false;
+        return (void) printf("unknown command\n");
     }
-
-    return true;
 }
 
 static void _fetch(Program * prog, Str str, const Animal * aml)
@@ -70,8 +88,34 @@ static void _fetch(Program * prog, Str str, const Animal * aml)
     (void) prog;
     word = Str_word(& str);
 
-    if (word.len) Animal_fetch(aml, word);
+    if  (word.len) Animal_fetch(aml, word);
     else printf("fetch what ?\n");
+}
+
+static void _spit(Program * prog, Str str, const Animal * aml)
+{
+    Str word;
+
+    (void) prog;
+    word = Str_word(& str);
+
+    Animal_spit(aml, word);
+}
+
+static void _carry(Program * prog, Str str, const Animal * aml)
+{
+    Str word;
+    int weight;
+
+    (void) prog;
+    
+    word = Str_word(& str);
+    if (! (lib_parse_int_len(word.cstr, word.len, & weight)))
+    {
+        return (void) printf("How much to carry ?\n");
+    }
+
+    Animal_carry(aml, weight);
 }
 
 static ERR _interact(Program * prog, Animal * aml, int id)
@@ -92,13 +136,16 @@ static ERR _interact(Program * prog, Animal * aml, int id)
         str = _get_input(prog);
         word = Str_word(& str);
 
-        if      (Str_eq(word, "done")) break;
-        else if (Str_eq(word, "info")) Animal_dbg(aml);
+        if      (Str_eq(word, "done"))  break;
+        else if (Str_eq(word, "info"))  Animal_dbg(aml);
         else if (Str_eq(word, "speak")) Animal_speak(aml);
-        else if (Str_eq(word, "run")) Animal_run(aml);
+        else if (Str_eq(word, "run"))   Animal_run(aml);
+        else if (Str_eq(word, "jump"))  Animal_jump(aml);
         else if (Str_eq(word, "fetch")) _fetch(prog, str, aml);
+        else if (Str_eq(word, "spit"))  _spit(prog, str, aml);
+        else if (Str_eq(word, "carry")) _carry(prog, str, aml);
         else if (Str_eq(word, "teach")) _teach(prog, str, id, aml);
-        else _help();
+        else _print_help();
     }
 
     return ERR_NONE;
@@ -149,7 +196,7 @@ ERR Program_process_input(Program * prog)
     {
         prog->runs = false;
     }
-    else if (Str_eq(word, "print")) _print(prog);
+    else if (Str_eq(word, "print")) _print(prog, str);
     else if (Str_eq(word, "add")) _add(prog, str);
     else if (Str_eq(word, "remove")) _remove_by_id(prog, str);
     else if (Str_eq(word, "get")) _get_by_id(prog, str);

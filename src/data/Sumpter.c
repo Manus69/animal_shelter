@@ -51,7 +51,7 @@ void Sumpter_carry(const Sumpter * sr, int weight)
 {
     if (sr->capacity >= weight)
     {
-        printf("%s carries %d tonnes\n", Animal_name((Animal *) sr), sr->capacity);
+        printf("%s carries %d tonnes\n", Animal_name((Animal *) sr), weight);
     }
     else
     {

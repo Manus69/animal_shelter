@@ -18,5 +18,6 @@ void Program_del(Program * prog);
 bool Program_run(Program * prog);
 ERR Program_status(const Program * prog);
 ERR Program_process_input(Program * prog);
+void Program_usage(const Program * prog);
 
 #endif

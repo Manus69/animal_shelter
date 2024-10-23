@@ -35,3 +35,8 @@ bool Program_run(Program * prog)
 
     return prog->runs;
 }
+
+void Program_usage(const Program * prog)
+{
+    
+}

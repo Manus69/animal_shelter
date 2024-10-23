@@ -69,7 +69,10 @@ void Animal_fetch(const Animal * aml, Str str)
 
 void Animal_carry(const Animal * aml, int weight)
 {
-    if (Animal_is_Sumpter(aml)) return Sumpter_carry((Sumpter *) aml, weight);
+    if (Animal_can_perform(aml, CMD_CARRY))
+    {
+        if (Animal_is_Sumpter(aml)) return Sumpter_carry((Sumpter *) aml, weight);
+    }
     else _refuse(aml, CMD_CARRY);
 }
 
@@ -85,5 +88,5 @@ void Animal_jump(const Animal * aml)
 
 void Animal_spit(const Animal * aml, Str str)
 {
-    _obj_cmd(aml, CMD_SPIT, "at", str);
+    _obj_cmd(aml, CMD_SPIT, str.len ? "at" : "", str);
 }
