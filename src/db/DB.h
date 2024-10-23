@@ -24,11 +24,13 @@ typedef enum
 typedef enum
 {
     _SQL_CREATE,
+    _SQL_SEL_ALL,
     _SQL_SEL_ID,
     _SQL_SEL_SPECIES,
     _SQL_SEL_AGE,
     _SQL_INS,
     _SQL_UPD_CMD,
+    _SQL_UPD_ALL,
     _SQL_DEL_ID,
     _SQL_DEL_SPECIES,
     _SQL_DEL_AGE,

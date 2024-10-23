@@ -8,7 +8,8 @@ ERR Program_init(Program * prog)
 {
     * prog = (Program) {};
 
-    if (DB_init(& prog->db)) return ERR_DB;
+    if ((prog->err = DB_init(& prog->db))) return prog->err;
+
     prog->runs = true;
 
     return ERR_NONE;
@@ -23,7 +24,6 @@ ERR Program_status(const Program * prog)
 {
     return prog->err;
 }
-
 
 bool Program_run(Program * prog)
 {

@@ -62,7 +62,7 @@ void Animal_fetch(const Animal * aml, Str str)
 {
     if (Animal_can_perform(aml, CMD_FETCH))
     {
-        printf("%s fetches %.*s\n", Animal_name(aml), str.len, str.len);
+        printf("%s fetches %.*s\n", Animal_name(aml), str.len, str.cstr);
     }
     else _refuse(aml, CMD_FETCH);
 }

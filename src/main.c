@@ -20,7 +20,7 @@ int main()
 {
     Program prog;
 
-    if (Program_init(& prog)) _err_and_die(& prog);
+    if (Program_init(& prog)) return _err_and_die(& prog);
 
     while (Program_run(& prog)) {}
     
