@@ -1,4 +1,4 @@
-#include "master.h"
+#include "lib.h"
 
 #include <string.h>
 #include <ctype.h>
@@ -16,7 +16,8 @@ int lib_get_line(char * buff, int bsize)
     while (true)
     {
         x = getchar();
-        if (x == '\n' || x == EOF) break;
+        if (x == '\n')  break;
+        if (x == EOF)   return -1;
 
         buff[len ++] = x;
 

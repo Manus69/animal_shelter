@@ -1,4 +1,3 @@
-#include "../master.h"
 #include "../data/IAnimal.h"
 #include "../data/IPet.h"
 #include "../data/ISumpter.h"

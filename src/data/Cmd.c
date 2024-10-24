@@ -4,13 +4,13 @@
 
 static const char * _cmd_cstr[CMD_COUNT] = 
 {
-    [CMD_CARRY] = "carry",
-    [CMD_CUDDLE] = "cuddle",
-    [CMD_FETCH] = "fetch",
-    [CMD_JUMP] = "jump",
-    [CMD_RUN] = "run",
-    [CMD_SPEAK] = "speak",
-    [CMD_SPIT] = "spit",
+    [CMD_CARRY] =   CMD_STR_CARRY,
+    [CMD_CUDDLE] =  CMD_STR_CUDDLE,
+    [CMD_FETCH] =   CMD_STR_FETCH,
+    [CMD_JUMP] =    CMD_STR_JUMP,
+    [CMD_RUN] =     CMD_STR_RUN,
+    [CMD_SPEAK] =   CMD_STR_SPEAK,
+    [CMD_SPIT] =    CMD_STR_SPIT,
 };
 
 char * CMD_name(CMD cmd)

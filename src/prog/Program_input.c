@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 
-
 static Str _get_input(Program * prog)
 {
     int len;
@@ -24,12 +23,6 @@ static ERR _add(Program * prog, Str str)
     return prog->err;
 }
 
-//to help msg functions
-static void _print_help(void)
-{
-    printf("Enter the command you wish the animal to perform or 'done' to return.\n");
-}
-
 static void _print_break(void)
 {
     printf("-----\n");
@@ -37,7 +30,7 @@ static void _print_break(void)
 
 static ERR _print_species(Program * prog, SPECIES sp)
 {
-
+    
 }
 
 static ERR _print(Program * prog, Str str)
@@ -57,8 +50,6 @@ static ERR _print(Program * prog, Str str)
 
     return prog->err;
 }
-
-
 
 static void _teach(Program * prog, Str str, int id, Animal * aml)
 {
@@ -123,29 +114,25 @@ static ERR _interact(Program * prog, Animal * aml, int id)
     Str str;
     Str word;
 
-    if (! aml)
-    {
-        printf("No animal\n");
+    if (! aml) return ({printf("No animal\n"); ERR_NONE;});
 
-        return ERR_NONE;
-    }
-
-    printf("'%s' is here\n", Animal_name(aml));
+    printf("'%s' the %s is here\n", Animal_name(aml), SPECIES_name(Animal_species(aml)));
+    
     while (true)
     {
         str = _get_input(prog);
         word = Str_word(& str);
 
-        if      (Str_eq(word, "done"))  break;
-        else if (Str_eq(word, "info"))  Animal_dbg(aml);
-        else if (Str_eq(word, "speak")) Animal_speak(aml);
-        else if (Str_eq(word, "run"))   Animal_run(aml);
-        else if (Str_eq(word, "jump"))  Animal_jump(aml);
-        else if (Str_eq(word, "fetch")) _fetch(prog, str, aml);
-        else if (Str_eq(word, "spit"))  _spit(prog, str, aml);
-        else if (Str_eq(word, "carry")) _carry(prog, str, aml);
-        else if (Str_eq(word, "teach")) _teach(prog, str, id, aml);
-        else _print_help();
+        if      (Str_eq(word, PROG_CMD_DONE))   break;
+        else if (Str_eq(word, PROG_CMD_INFO))   Animal_dbg(aml);
+        else if (Str_eq(word, PROG_CMD_TEACH))  _teach(prog, str, id, aml);
+        else if (Str_eq(word, CMD_STR_SPEAK))   Animal_speak(aml);
+        else if (Str_eq(word, CMD_STR_RUN))     Animal_run(aml);
+        else if (Str_eq(word, CMD_STR_JUMP))    Animal_jump(aml);
+        else if (Str_eq(word, CMD_STR_FETCH))   _fetch(prog, str, aml);
+        else if (Str_eq(word, CMD_STR_SPIT))    _spit(prog, str, aml);
+        else if (Str_eq(word, CMD_STR_CARRY))   _carry(prog, str, aml);
+        else    Program_help_inter_msg(prog);
     }
 
     return ERR_NONE;
@@ -191,15 +178,14 @@ ERR Program_process_input(Program * prog)
     str = _get_input(prog);
     word = Str_word(& str);
 
-    if      (! word.len) {}
-    else if (Str_eq(word, "quit"))
+    if (word.len < 0 || Str_eq(word, PROG_CMD_QUIT))
     {
         prog->runs = false;
     }
-    else if (Str_eq(word, "print")) _print(prog, str);
-    else if (Str_eq(word, "add")) _add(prog, str);
-    else if (Str_eq(word, "remove")) _remove_by_id(prog, str);
-    else if (Str_eq(word, "get")) _get_by_id(prog, str);
+    else if (Str_eq(word, PROG_CMD_PRINT)) _print(prog, str);
+    else if (Str_eq(word, PROG_CMD_ADD)) _add(prog, str);
+    else if (Str_eq(word, PROG_CMD_REM)) _remove_by_id(prog, str);
+    else if (Str_eq(word, PROG_CMD_GET)) _get_by_id(prog, str);
     else    prog->err = ERR_PARSE;
 
     return prog->err;

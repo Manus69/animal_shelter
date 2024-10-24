@@ -1,7 +1,7 @@
 #ifndef IANIMAL_H
 #define IANIMAL_H
 
-#include "../master.h"
+#include "../lib/lib.h"
 #include "SPECIES.h"
 #include "Err.h"
 

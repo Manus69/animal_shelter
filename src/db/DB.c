@@ -1,6 +1,5 @@
 #include "DB.h"
 
-#include "../master.h"
 #include "../data/IAnimal.h"
 
 #include <stdio.h>

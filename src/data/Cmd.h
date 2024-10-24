@@ -1,7 +1,7 @@
 #ifndef CMD_H
 #define CMD_H
 
-#include "../master.h"
+#include "../lib/lib.h"
 
 typedef unsigned int Cmd;
 
@@ -17,6 +17,14 @@ typedef enum
     CMD_JUMP,
     CMD_COUNT,
 }   CMD;
+
+#define CMD_STR_SPEAK   "speak"
+#define CMD_STR_RUN     "run"
+#define CMD_STR_CARRY   "carry"
+#define CMD_STR_CUDDLE  "cuddle"
+#define CMD_STR_FETCH   "fetch"
+#define CMD_STR_SPIT    "spit"
+#define CMD_STR_JUMP    "jump"
 
 static inline Cmd Cmd_add(Cmd * cmds, CMD cmd)
 {

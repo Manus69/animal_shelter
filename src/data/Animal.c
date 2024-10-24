@@ -1,6 +1,5 @@
 #include "Animal.h"
 #include "IAnimal.h"
-#include "../master.h"
 
 #include <string.h>
 #include <stdio.h>
