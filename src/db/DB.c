@@ -73,6 +73,8 @@ static ERR _print_rows(Stmt * stmt)
 
 ERR DB_print_all(DB * db)
 {
+    sqlite3_reset(db->stmts[_SQL_SEL_ALL]);
+
     return _print_rows(db->stmts[_SQL_SEL_ALL]);
 }
 
@@ -118,6 +120,8 @@ ERR DB_insert(DB * db, const Animal * aml)
     Dto dto;
 
     dto = Animal_Dto(aml);
+
+    sqlite3_reset(db->stmts[_SQL_INS]);
     Stmt_Dto_bind(db->stmts[_SQL_INS], dto);
 
     return _step(db->stmts[_SQL_INS]);
@@ -125,6 +129,7 @@ ERR DB_insert(DB * db, const Animal * aml)
 
 ERR DB_update_cmds(DB * db, int id, Cmd cmd)
 {
+    sqlite3_reset(db->stmts[_SQL_UPD_CMD]);
     sqlite3_bind_int(db->stmts[_SQL_UPD_CMD], 1, cmd);
     sqlite3_bind_int(db->stmts[_SQL_UPD_CMD], 2, id);
 
@@ -136,6 +141,8 @@ ERR DB_update(DB * db, int id, const Animal * aml)
     Dto dto;
 
     dto = Animal_Dto(aml);
+
+    sqlite3_reset(db->stmts[_SQL_UPD_ALL]);
     Stmt_Dto_bind(db->stmts[_SQL_UPD_ALL], dto);
     sqlite3_bind_int(db->stmts[_SQL_UPD_ALL], TBL_COL_COUNT, id);
 
@@ -191,7 +198,6 @@ ERR DB_init(DB ** db)
 
     return ERR_MEM;
 }
-
 
 ERR DB_deinit(DB * db)
 {
