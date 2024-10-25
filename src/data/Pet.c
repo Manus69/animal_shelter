@@ -56,7 +56,7 @@ char * Pet_owner(const Pet * pet)
 void Pet_set_owner_len(Pet * pet, const char * owner, int len)
 {
     len = $min(len, PET_NOBSIZE - 1);
-    strncpy(pet->owner, owner, len);
+    memcpy(pet->owner, owner, len);
 }
 
 void Pet_set_owner(Pet * pet, const char * owner)

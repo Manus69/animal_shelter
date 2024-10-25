@@ -37,6 +37,15 @@ static ERR _print_species(Program * prog, SPECIES sp)
     return prog->err;
 }
 
+static ERR _print_all(Program * prog)
+{
+    _print_break();
+    prog->err = DB_print_all(prog->db);
+    _print_break();
+
+    return prog->err;
+}
+
 static ERR _print(Program * prog, Str str)
 {
     Str     word;
@@ -44,14 +53,9 @@ static ERR _print(Program * prog, Str str)
 
     word = Str_word(& str);
 
-    if (word.len == 0)
-    {
-        _print_break();
-        prog->err = DB_print_all(prog->db);
-        _print_break();
-    }
+    if      (word.len == 0)                 return _print_all(prog);
     else if (SPECIES_parse_Str(word, & sp)) return _print_species(prog, sp);
-    else prog->err = ERR_PARSE;
+    else    prog->err = ERR_PARSE;
 
     return prog->err;
 }
@@ -71,10 +75,7 @@ static void _teach(Program * prog, Str str, int id, Animal * aml)
         
         prog->err = DB_update(prog->db, id, aml);
     }
-    else
-    {
-        return (void) printf("unknown command\n");
-    }
+    else return (void) printf("unknown command\n");
 }
 
 static void _fetch(Program * prog, Str str, const Animal * aml)

@@ -20,12 +20,10 @@ int main()
 
     if (Program_init(& prog)) return _err_and_die(& prog);
 
+    Program_help_msg(& prog);
+    Program_help_inter_msg(& prog);
+    
     while (Program_run(& prog)) {}
-
-    // int x;
-
-    // DB_count(prog.db, & x);
-    // printf("%d\n", x);
 
     Program_del(& prog);
 

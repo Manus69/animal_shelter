@@ -1,7 +1,9 @@
 #!/bin/sh
 
-files=$(find . -type f -name "*.c" -not -path "*/sqlite/*")
-obj=src/sqlite/sqlite3.o
+files=$(find . -type f -name "*.c")
+flags="-Wall -Wextra -O2"
+exe="ansh"
 
-echo "gcc -Wall -Wextra -g3 $files $obj"
-gcc -Wall -Wextra -g3 $files $obj
+echo "Compiling:\n$files\nThis might take a while..."
+gcc $flags -o $exe $files
+

@@ -4,6 +4,7 @@
 
 static const char * _cmd_cstr[CMD_COUNT] = 
 {
+    [CMD_NONE] =    "",
     [CMD_CARRY] =   CMD_STR_CARRY,
     [CMD_CUDDLE] =  CMD_STR_CUDDLE,
     [CMD_FETCH] =   CMD_STR_FETCH,

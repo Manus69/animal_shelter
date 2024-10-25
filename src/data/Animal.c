@@ -43,7 +43,8 @@ char * Animal_name(const Animal * animal)
 void Animal_set_name_len(Animal * animal, const char * name, int len)
 {
     len = $min(len, ANIMAL_NBSIZE - 1);
-    strncpy(animal->name, name, len);
+    memcpy(animal->name, name, len);
+    // strncpy(animal->name, name, len);
 }
 
 void Animal_set_name(Animal * animal, const char * name)

@@ -49,7 +49,7 @@ static int _stmt_init(DB * db)
 
 static int _create(DB * db)
 {
-    return sqlite3_step(db->stmts[_SQL_CREATE]);
+    return sqlite3_exec(db->db, _sql[_SQL_CREATE], 0, 0, 0);
 }
 
 static ERR _print_rows(Stmt * stmt)
@@ -180,25 +180,13 @@ ERR DB_count(DB * db, int * x)
 
 ERR DB_init(DB ** db)
 {
-    int res;
-
     if ((* db = calloc(1, sizeof(DB))))
     {
-        if ((res = sqlite3_open(DB_PATH, & (* db)->db)))
-        {
-            free(* db);
-
-            return ERR_IO;
-        }
-
-        if ((res = _stmt_init(* db)))
-        {
-            free(* db);
-
-            return ERR_SQL;
-        }
+        if (sqlite3_open(DB_PATH, & (* db)->db))    return ({free(* db); ERR_IO;});
+        if (_create(* db))                          return ({free(* db); ERR_DB;});
+        if (_stmt_init(* db))                       return ({free(* db); ERR_SQL;});
         
-        return _create(* db) == SQLITE_DONE ? ERR_NONE : ERR_DB;
+        return ERR_NONE;
     }
 
     return ERR_MEM;
