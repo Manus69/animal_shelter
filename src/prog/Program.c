@@ -45,6 +45,7 @@ void Program_help_msg(const Program * prog)
             "\t`" PROG_CMD_PRINT "` (species) - print table\n" \
             "\t`" PROG_CMD_ADD "` species name age ([commands]) (owner) (capacity) - add an animal\n"\
             "\t`" PROG_CMD_GET "` id - get an animal with the id and go into interactive mode\n" \
+            "\t`" PROG_CMD_REM "` id | species - remove an animal or the whole species\n"\
             "\t`" PROG_CMD_QUIT "` - quit\n");
 }
 

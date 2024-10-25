@@ -167,15 +167,28 @@ static ERR _get_by_id(Program * prog, Str str)
     return prog->err;
 }
 
-static ERR _remove_by_id(Program * prog, Str str)
+static ERR _remove_by_id(Program * prog, int id)
 {
-    int id;
-    Str word;
+    return (prog->err = DB_del_id(prog->db, id));
+}
+
+static ERR _remove_by_species(Program * prog, SPECIES sp)
+{
+    return (prog->err = DB_del_species(prog->db, sp));
+}
+
+static ERR _remove(Program * prog, Str str)
+{
+    int     id;
+    Str     word;
+    SPECIES sp;
 
     word = Str_word(& str);
-    if (! lib_parse_int_len(word.cstr, word.len, & id)) return ERR_PARSE;
+    
+    if (lib_parse_int_len(word.cstr, word.len, & id)) return _remove_by_id(prog, id);
+    if (SPECIES_parse_Str(word, & sp)) return _remove_by_species(prog, sp);
 
-    return (prog->err = DB_del_id(prog->db, id));
+    return (prog->err = ERR_PARSE);
 }
 
 ERR Program_process_input(Program * prog)
@@ -193,7 +206,7 @@ ERR Program_process_input(Program * prog)
     }
     else if (Str_eq(word, PROG_CMD_PRINT))  _print(prog, str);
     else if (Str_eq(word, PROG_CMD_ADD))    _add(prog, str);
-    else if (Str_eq(word, PROG_CMD_REM))    _remove_by_id(prog, str);
+    else if (Str_eq(word, PROG_CMD_REM))    _remove(prog, str);
     else if (Str_eq(word, PROG_CMD_GET))    _get_by_id(prog, str);
     else if (Str_eq(word, PROG_CMD_HELP))   Program_help_msg(prog);
     else    prog->err = ERR_PARSE;
