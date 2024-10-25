@@ -4,30 +4,30 @@
 
 static const char * _names[SPECIES_COUNT] = 
 {
-    [SPECIES_ASS] = "ass",
-    [SPECIES_CAMEL] = "camel",
-    [SPECIES_CAT] = "cat",
-    [SPECIES_DOG] = "dog",
+    [SPECIES_ASS] =     "ass",
+    [SPECIES_CAMEL] =   "camel",
+    [SPECIES_CAT] =     "cat",
+    [SPECIES_DOG] =     "dog",
     [SPECIES_HAMSTER] = "hamster",
-    [SPECIES_HORSE] = "horse",
+    [SPECIES_HORSE] =   "horse",
 };
 
 static const char * _sounds[SPECIES_COUNT] = 
 {
-    [SPECIES_ASS] = "bray",
-    [SPECIES_CAT] = "meow",
-    [SPECIES_DOG] = "bark",
-    [SPECIES_HORSE] = "neigh",
+    [SPECIES_ASS] =     "bray",
+    [SPECIES_CAT] =     "meow",
+    [SPECIES_DOG] =     "bark",
+    [SPECIES_HORSE] =   "neigh",
 };
 
 static const Cmd _cmds[SPECIES_COUNT] = 
 {
-    [SPECIES_ASS] = (1 << CMD_CARRY) | (1 << CMD_SPEAK),
-    [SPECIES_CAMEL] = (1 << CMD_CARRY) | (1 << CMD_SPIT),
-    [SPECIES_CAT] = (1 << CMD_SPEAK) | (1 << CMD_CUDDLE) | (1 << CMD_RUN) | (1 << CMD_JUMP),
-    [SPECIES_DOG] = (1 << CMD_SPEAK) | (1 << CMD_CUDDLE) | (1 << CMD_FETCH) | (1 << CMD_RUN),
-    [SPECIES_HAMSTER] = 0,
-    [SPECIES_HORSE] = (1 << CMD_RUN) | (1 << CMD_CARRY) | (1 << CMD_SPEAK) | (1 << CMD_JUMP),
+    [SPECIES_ASS] =     (1 << CMD_CARRY) | (1 << CMD_SPEAK),
+    [SPECIES_CAMEL] =   (1 << CMD_CARRY) | (1 << CMD_SPIT),
+    [SPECIES_CAT] =     (1 << CMD_SPEAK) | (1 << CMD_CUDDLE) | (1 << CMD_RUN) | (1 << CMD_JUMP),
+    [SPECIES_DOG] =     (1 << CMD_SPEAK) | (1 << CMD_CUDDLE) | (1 << CMD_FETCH) | (1 << CMD_RUN),
+    [SPECIES_HAMSTER] = (0),
+    [SPECIES_HORSE] =   (1 << CMD_RUN) | (1 << CMD_CARRY) | (1 << CMD_SPEAK) | (1 << CMD_JUMP),
 };
 
 char * SPECIES_name(SPECIES species)
@@ -47,7 +47,7 @@ Cmd SPECIES_commands(SPECIES species)
 
 bool SPECIES_can_be_taught(SPECIES species, CMD cmd)
 {
-    return SPECIES_commands(species) & cmd;
+    return Cmd_has(SPECIES_commands(species), cmd);
 }
 
 int SPECIES_parse(const char * cstr, SPECIES * species)

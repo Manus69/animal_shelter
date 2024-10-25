@@ -16,6 +16,7 @@ ERR DB_update(DB * db, int id, const Animal * aml);
 ERR DB_del_id(DB * db, int id);
 ERR DB_del_age(DB * db, int age);
 ERR DB_del_species(DB * db, SPECIES species);
+ERR DB_count(DB * db, int * x);
 ERR DB_init(DB ** db);
 ERR DB_deinit(DB * db);
 

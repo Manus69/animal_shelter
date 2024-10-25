@@ -24,6 +24,7 @@ typedef enum
 typedef enum
 {
     _SQL_CREATE,
+    _SQL_COUNT_ROWS,
     _SQL_SEL_ALL,
     _SQL_SEL_ID,
     _SQL_SEL_SPECIES,

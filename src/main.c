@@ -13,8 +13,6 @@ static ERR _err_and_die(const Program * prog)
 }
 
 //simgle quotes for name\owner?
-//db path is all fucked up
-//compile all statements at intit, bind when necessary?
 
 int main()
 {
@@ -23,14 +21,11 @@ int main()
     if (Program_init(& prog)) return _err_and_die(& prog);
 
     while (Program_run(& prog)) {}
-    
-    // Cmd cmd = 0;
-    // Cmd_add(& cmd, CMD_RUN);
-    // Cmd_add(& cmd, CMD_JUMP);
-    
-    // char buff[1000] = {};
-    // Cmd_cstr(cmd, buff);
-    // printf("%s\n", buff);
+
+    // int x;
+
+    // DB_count(prog.db, & x);
+    // printf("%d\n", x);
 
     Program_del(& prog);
 

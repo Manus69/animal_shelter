@@ -13,6 +13,16 @@ static const char * _cmd_cstr[CMD_COUNT] =
     [CMD_SPIT] =    CMD_STR_SPIT,
 };
 
+Cmd Cmd_add(Cmd * cmds, CMD cmd)
+{
+    return (* cmds |= (1 << cmd));
+}
+
+bool Cmd_has(Cmd cmds, CMD cmd)
+{
+    return (cmds) & (1 << cmd);
+}
+
 char * CMD_name(CMD cmd)
 {
     return (char *) _cmd_cstr[cmd];
@@ -32,7 +42,7 @@ int Cmd_cstr(Cmd cmd, char * buff)
 
     for (int k = 0; k < CMD_COUNT; k ++)
     {
-        if (Cmd_has(& cmd, k))
+        if (Cmd_has(cmd, k))
         {
             len += _CMD_cstr(k, buff + len);
         }

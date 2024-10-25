@@ -12,6 +12,7 @@
 #define PROG_CMD_TEACH  "teach"
 #define PROG_CMD_DONE   "done"
 #define PROG_CMD_INFO   "info"
+#define PROG_CMD_HELP   "help"
 
 typedef struct
 {

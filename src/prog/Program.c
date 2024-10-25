@@ -39,21 +39,22 @@ void Program_help_msg(const Program * prog)
 {
     (void) prog;
 
-    printf("Usage: enter commands into the termial to manipulate the animal database.\n \
-            Commands: \n" \
-            "\t" PROG_CMD_PRINT " (species)\n" \
-            "\t" PROG_CMD_ADD " species name age ([commands]) (owner) (capacity)\n"\
-            "\t" PROG_CMD_GET " id - get an animal with the to go into interactive mode\n" \
-            "\t" PROG_CMD_QUIT " to quit\n");
+    printf("Usage: enter commands into the termial to manipulate the animal database.\n" \
+            "Commands: \n" \
+            "\t`" PROG_CMD_HELP "` - display help message\n"
+            "\t`" PROG_CMD_PRINT "` (species) - print table\n" \
+            "\t`" PROG_CMD_ADD "` species name age ([commands]) (owner) (capacity) - add an animal\n"\
+            "\t`" PROG_CMD_GET "` id - get an animal with the id and go into interactive mode\n" \
+            "\t`" PROG_CMD_QUIT "` - quit\n");
 }
 
 void Program_help_inter_msg(const Program * prog)
 {
     (void) prog;
 
-    printf("Interactive mode:\n\
-            Enter a command you want the animal to perform or " PROG_CMD_TEACH \
-            "to teach the animal\n"\
-            PROG_CMD_INFO " to display info\n"\
-            PROG_CMD_DONE " to exit interactive mode\n");
+    printf("Interactive mode:\n"\
+            "Enter a command you want the animal to perform or `" PROG_CMD_TEACH \
+            "` to teach the animal\n"\
+            "\t`"PROG_CMD_INFO "` to display info\n"\
+            "\t`"PROG_CMD_DONE "` to exit interactive mode\n");
 }

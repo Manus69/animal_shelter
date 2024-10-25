@@ -26,16 +26,9 @@ typedef enum
 #define CMD_STR_SPIT    "spit"
 #define CMD_STR_JUMP    "jump"
 
-static inline Cmd Cmd_add(Cmd * cmds, CMD cmd)
-{
-    return (* cmds |= (1 << cmd));
-}
 
-static inline bool Cmd_has(const Cmd * cmds, CMD cmd)
-{
-    return (* cmds) & (1 << cmd);
-}
-
+Cmd     Cmd_add(Cmd * cmds, CMD cmd);
+bool    Cmd_has(Cmd cmds, CMD cmd);
 char *  CMD_name(CMD cmd);
 int     CMD_parse(const char * cstr, CMD * cmd);
 bool    CMD_parse_Str(Str str, CMD * cmd);

@@ -9,6 +9,8 @@ static const char * _sql[] =
     [_SQL_CREATE] = "create table if not exists animals (id integer primary key not null, "\
     "species int, name text, age int, commands int, owner text, capacity int);",
 
+    [_SQL_COUNT_ROWS] = "select count (*) from animals;",
+
     [_SQL_SEL_ALL] = "select * from animals;",
 
     [_SQL_SEL_ID] = "select * from animals where id=?;",
@@ -161,6 +163,19 @@ ERR DB_del_age(DB * db, int age)
 ERR DB_del_species(DB * db, SPECIES species)
 {
     return _del_int(db->stmts[_SQL_DEL_SPECIES], species);
+}
+
+ERR DB_count(DB * db, int * x)
+{
+    sqlite3_reset(db->stmts[_SQL_COUNT_ROWS]);
+    if (sqlite3_step(db->stmts[_SQL_COUNT_ROWS]) == SQLITE_ROW)
+    {
+        * x = sqlite3_column_int(db->stmts[_SQL_COUNT_ROWS], 0);
+
+        return ERR_NONE;
+    }
+
+    return ERR_DB;
 }
 
 ERR DB_init(DB ** db)

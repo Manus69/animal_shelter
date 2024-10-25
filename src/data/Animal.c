@@ -63,7 +63,7 @@ Cmd Animal_Cmd(const Animal * animal)
 
 bool Animal_can_perform(const Animal * aml, CMD cmd)
 {
-    return Cmd_has(& aml->cmd, cmd);
+    return Cmd_has(aml->cmd, cmd);
 }
 
 int Animal_cstr_base(const Animal * animal, char * buff)

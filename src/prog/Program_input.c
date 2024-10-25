@@ -30,7 +30,11 @@ static void _print_break(void)
 
 static ERR _print_species(Program * prog, SPECIES sp)
 {
-    
+    _print_break();
+    prog->err = DB_print_species(prog->db, sp);
+    _print_break();
+
+    return prog->err;
 }
 
 static ERR _print(Program * prog, Str str)
@@ -40,13 +44,14 @@ static ERR _print(Program * prog, Str str)
 
     word = Str_word(& str);
 
-    if (SPECIES_parse_Str(word, & sp)) return _print_species(prog, sp);
     if (word.len == 0)
     {
         _print_break();
         prog->err = DB_print_all(prog->db);
         _print_break();
     }
+    else if (SPECIES_parse_Str(word, & sp)) return _print_species(prog, sp);
+    else prog->err = ERR_PARSE;
 
     return prog->err;
 }
@@ -120,10 +125,12 @@ static ERR _interact(Program * prog, Animal * aml, int id)
     
     while (true)
     {
-        str = _get_input(prog);
+        if ((str = _get_input(prog)).len < 0)   break;
+        
         word = Str_word(& str);
 
         if      (Str_eq(word, PROG_CMD_DONE))   break;
+        else if (Str_eq(word, PROG_CMD_HELP))   Program_help_inter_msg(prog);
         else if (Str_eq(word, PROG_CMD_INFO))   Animal_dbg(aml);
         else if (Str_eq(word, PROG_CMD_TEACH))  _teach(prog, str, id, aml);
         else if (Str_eq(word, CMD_STR_SPEAK))   Animal_speak(aml);
@@ -178,14 +185,16 @@ ERR Program_process_input(Program * prog)
     str = _get_input(prog);
     word = Str_word(& str);
 
-    if (word.len < 0 || Str_eq(word, PROG_CMD_QUIT))
+    if      (word.len == 0) {}
+    else if (word.len < 0 || Str_eq(word, PROG_CMD_QUIT))
     {
         prog->runs = false;
     }
-    else if (Str_eq(word, PROG_CMD_PRINT)) _print(prog, str);
-    else if (Str_eq(word, PROG_CMD_ADD)) _add(prog, str);
-    else if (Str_eq(word, PROG_CMD_REM)) _remove_by_id(prog, str);
-    else if (Str_eq(word, PROG_CMD_GET)) _get_by_id(prog, str);
+    else if (Str_eq(word, PROG_CMD_PRINT))  _print(prog, str);
+    else if (Str_eq(word, PROG_CMD_ADD))    _add(prog, str);
+    else if (Str_eq(word, PROG_CMD_REM))    _remove_by_id(prog, str);
+    else if (Str_eq(word, PROG_CMD_GET))    _get_by_id(prog, str);
+    else if (Str_eq(word, PROG_CMD_HELP))   Program_help_msg(prog);
     else    prog->err = ERR_PARSE;
 
     return prog->err;
