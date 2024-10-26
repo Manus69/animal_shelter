@@ -12,5 +12,4 @@ struct Sumpter
 
 Sumpter Sumpter_ctor(SPECIES species, const char * name, int age, Cmd cmds, int capacity);
 
-
 #endif

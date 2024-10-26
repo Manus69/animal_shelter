@@ -115,6 +115,23 @@ static void _carry(Program * prog, Str str, const Animal * aml)
     Animal_carry(aml, weight);
 }
 
+static ERR _remove_by_id(Program * prog, int id)
+{
+    return (prog->err = DB_del_id(prog->db, id));
+}
+
+static ERR _remove_by_species(Program * prog, SPECIES sp)
+{
+    return (prog->err = DB_del_species(prog->db, sp));
+}
+
+static ERR _remove_interactive(Program * prog, int id, const Animal * aml)
+{
+    printf("%s is kicked out\n", Animal_name(aml));
+
+    return _remove_by_id(prog, id);
+}
+
 static ERR _interact(Program * prog, Animal * aml, int id)
 {
     Str str;
@@ -140,6 +157,7 @@ static ERR _interact(Program * prog, Animal * aml, int id)
         else if (Str_eq(word, CMD_STR_FETCH))   _fetch(prog, str, aml);
         else if (Str_eq(word, CMD_STR_SPIT))    _spit(prog, str, aml);
         else if (Str_eq(word, CMD_STR_CARRY))   _carry(prog, str, aml);
+        else if (Str_eq(word, PROG_CMD_REM))    return _remove_interactive(prog, id, aml);
         else    Program_help_inter_msg(prog);
     }
 
@@ -167,15 +185,7 @@ static ERR _get_by_id(Program * prog, Str str)
     return prog->err;
 }
 
-static ERR _remove_by_id(Program * prog, int id)
-{
-    return (prog->err = DB_del_id(prog->db, id));
-}
 
-static ERR _remove_by_species(Program * prog, SPECIES sp)
-{
-    return (prog->err = DB_del_species(prog->db, sp));
-}
 
 static ERR _remove(Program * prog, Str str)
 {

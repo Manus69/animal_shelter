@@ -69,9 +69,9 @@ void Animal_fetch(const Animal * aml, Str str)
 
 void Animal_carry(const Animal * aml, int weight)
 {
-    if (Animal_can_perform(aml, CMD_CARRY))
+    if (Animal_is_Sumpter(aml) && Animal_can_perform(aml, CMD_CARRY))
     {
-        if (Animal_is_Sumpter(aml)) return Sumpter_carry((Sumpter *) aml, weight);
+        return Sumpter_carry((Sumpter *) aml, weight);
     }
     else _refuse(aml, CMD_CARRY);
 }
