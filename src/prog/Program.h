@@ -13,6 +13,7 @@
 #define PROG_CMD_DONE   "done"
 #define PROG_CMD_INFO   "info"
 #define PROG_CMD_HELP   "help"
+#define PROG_CMD_COUNT  "count"
 
 typedef struct
 {

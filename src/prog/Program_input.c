@@ -185,8 +185,6 @@ static ERR _get_by_id(Program * prog, Str str)
     return prog->err;
 }
 
-
-
 static ERR _remove(Program * prog, Str str)
 {
     int     id;
@@ -199,6 +197,20 @@ static ERR _remove(Program * prog, Str str)
     if (SPECIES_parse_Str(word, & sp)) return _remove_by_species(prog, sp);
 
     return (prog->err = ERR_PARSE);
+}
+
+static ERR _count(Program * prog, Str str)
+{
+    int x;
+    
+    (void) str;
+    
+    if ((prog->err = DB_count(prog->db, & x)) == ERR_NONE)
+    {
+        printf("Number of animals: %d\n", x);
+    }
+
+    return prog->err;
 }
 
 ERR Program_process_input(Program * prog)
@@ -218,6 +230,7 @@ ERR Program_process_input(Program * prog)
     else if (Str_eq(word, PROG_CMD_ADD))    _add(prog, str);
     else if (Str_eq(word, PROG_CMD_REM))    _remove(prog, str);
     else if (Str_eq(word, PROG_CMD_GET))    _get_by_id(prog, str);
+    else if (Str_eq(word, PROG_CMD_COUNT))  _count(prog, str);  
     else if (Str_eq(word, PROG_CMD_HELP))   Program_help_msg(prog);
     else    prog->err = ERR_PARSE;
 

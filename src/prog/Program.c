@@ -42,11 +42,12 @@ void Program_help_msg(const Program * prog)
     printf("Usage: enter commands into the terminal\n" \
             "Commands: \n" \
             "\t`" PROG_CMD_HELP "` - display the help message\n"
-            "\t`" PROG_CMD_PRINT "` [species] - print table\n" \
+            "\t`" PROG_CMD_COUNT "` - count animals in the database\n"
+            "\t`" PROG_CMD_PRINT "` [species] - print data\n" \
             "\t`" PROG_CMD_ADD "` species name age [[commands]] [owner] [capacity] - add an animal\n"\
             "\t`" PROG_CMD_GET "` id - get an animal with the id and go into interactive mode\n" \
             "\t`" PROG_CMD_REM "` id | species - remove an animal or purge the whole species\n"\
-            "\t`" PROG_CMD_QUIT "` - quit\n");
+            "\t`" PROG_CMD_QUIT "` - quit\n\n");
 }
 
 static void _list_animal_cmds(const Program * prog)
@@ -71,5 +72,6 @@ void Program_help_inter_msg(const Program * prog)
     _list_animal_cmds(prog);
 
     printf( "\t`"PROG_CMD_INFO "` - display info\n"\
-            "\t`"PROG_CMD_DONE "` - exit interactive mode\n");
+            "\t`"PROG_CMD_REM "` - remove selected animal\n"\
+            "\t`"PROG_CMD_DONE "` - exit interactive mode\n\n");
 }

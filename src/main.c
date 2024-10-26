@@ -12,8 +12,6 @@ static ERR _err_and_die(const Program * prog)
     return err;
 }
 
-//simgle quotes for name\owner?
-
 int main()
 {
     Program prog;
